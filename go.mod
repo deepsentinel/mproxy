@@ -2,8 +2,6 @@ module github.com/absmach/mproxy
 
 go 1.21
 
-toolchain go1.21.4
-
 require (
 	github.com/caarlos0/env/v11 v11.0.0
 	github.com/eclipse/paho.mqtt.golang v1.4.3

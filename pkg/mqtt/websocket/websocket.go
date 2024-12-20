@@ -70,10 +70,28 @@ func (p Proxy) pass(in *websocket.Conn) {
 	// And also avoiding proxy cancellation due to parent context cancellation.
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	dialer := &websocket.Dialer{
-		Subprotocols: []string{"mqtt"},
+
+	var outboundConn net.Conn
+	var err error
+
+	// Choose connection type based on target protocol
+	if strings.HasPrefix(p.config.Target, "tcp://") {
+		// Connect using TCP
+		target := strings.TrimPrefix(p.config.Target, "tcp://")
+		outboundConn, err = net.Dial("tcp", target)
+	} else if strings.HasPrefix(p.config.Target, "ws://") || strings.HasPrefix(p.config.Target, "wss://") {
+		// Connect using WebSocket
+		dialer := &websocket.Dialer{
+			Subprotocols: []string{"mqtt"},
+		}
+		wsConn, _, err := dialer.Dial(p.config.Target, nil)
+		if err == nil {
+			outboundConn = newConn(wsConn)
+		}
+	} else {
+		err = fmt.Errorf("unsupported protocol in target URL: %s", p.config.Target)
 	}
-	srv, _, err := dialer.Dial(p.config.Target, nil)
+
 	if err != nil {
 		p.logger.Error("Unable to connect to broker", slog.Any("error", err))
 		return
@@ -81,7 +99,6 @@ func (p Proxy) pass(in *websocket.Conn) {
 
 	errc := make(chan error, 1)
 	inboundConn := newConn(in)
-	outboundConn := newConn(srv)
 
 	defer inboundConn.Close()
 	defer outboundConn.Close()
