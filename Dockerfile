@@ -37,7 +37,9 @@ RUN mkdir -p /app/ssl/certs
 
 # Expose all necessary ports
 # MQTT
+EXPOSE 1883
 EXPOSE 1884
+EXPOSE 8080
 # MQTT/TLS
 EXPOSE 8883
 # MQTT/mTLS
