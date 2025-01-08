@@ -40,7 +40,7 @@ func New(config mproxy.Config, handler session.Handler, interceptor session.Inte
 
 var upgrader = websocket.Upgrader{
 	// Timeout for WS upgrade request handshake
-	HandshakeTimeout: 30 * time.Second,
+	HandshakeTimeout: 60 * time.Second,
 	// Buffer sizes for read and write operations
 	ReadBufferSize:  4096,
 	WriteBufferSize: 4096,

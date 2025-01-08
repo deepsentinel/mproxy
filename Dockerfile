@@ -25,7 +25,7 @@ WORKDIR /app
 
 # Install necessary runtime dependencies
 RUN apt-get update && \
-    apt-get install -y ca-certificates && \
+    apt-get install -y ca-certificates mosquitto-clients && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the binary and config files from builder
