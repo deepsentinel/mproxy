@@ -40,7 +40,10 @@ func New(config mproxy.Config, handler session.Handler, interceptor session.Inte
 
 var upgrader = websocket.Upgrader{
 	// Timeout for WS upgrade request handshake
-	HandshakeTimeout: 10 * time.Second,
+	HandshakeTimeout: 30 * time.Second,
+	// Buffer sizes for read and write operations
+	ReadBufferSize:  4096,
+	WriteBufferSize: 4096,
 	// Paho JS client expecting header Sec-WebSocket-Protocol:mqtt in Upgrade response during handshake.
 	Subprotocols: []string{"mqttv3.1", "mqtt"},
 	// Allow CORS
